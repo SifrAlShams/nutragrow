@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 import ComingSoon from '@/components/ComingSoon';
 import { product } from '@/lib/product-data';
 
-const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
+const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON !== 'false';
 
 export default function Home() {
   if (isComingSoon) {

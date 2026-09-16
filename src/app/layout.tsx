@@ -14,7 +14,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
+const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON !== 'false';
 
 export const metadata: Metadata = {
   title: isComingSoon
