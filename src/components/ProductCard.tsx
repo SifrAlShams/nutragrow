@@ -61,12 +61,17 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <motion.button
           onClick={() => addToCart(product)}
-          className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          disabled={product.stock !== undefined && product.stock <= 0}
+          className={`w-full py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 ${
+            product.stock !== undefined && product.stock <= 0
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-primary-600 text-white hover:bg-primary-700'
+          }`}
+          whileHover={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 1.02 }}
+          whileTap={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 0.98 }}
         >
           <ShoppingCart size={20} />
-          Add to Cart
+          {product.stock !== undefined && product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
         </motion.button>
       </div>
     </motion.div>

@@ -104,6 +104,38 @@ export default function Footer() {
               </div>
             </div>
           </motion.div>
+
+          {/* Legal Links */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <h3 className="text-xl font-bold mb-6">Legal</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="/privacy-policy" className="text-gray-400 hover:text-primary-400 transition-colors">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="/terms" className="text-gray-400 hover:text-primary-400 transition-colors">
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a href="/refund-policy" className="text-gray-400 hover:text-primary-400 transition-colors">
+                  Refund Policy
+                </a>
+              </li>
+              <li>
+                <a href="/shipping-policy" className="text-gray-400 hover:text-primary-400 transition-colors">
+                  Shipping Policy
+                </a>
+              </li>
+            </ul>
+          </motion.div>
         </div>
 
         <motion.div

@@ -9,6 +9,7 @@ export interface Product {
   benefits: string[];
   usage: string[];
   certifications: string[];
+  stock?: number;
 }
 
 export interface Ingredient {

@@ -166,11 +166,19 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             {/* Add to Cart Button */}
             <motion.button
               onClick={handleAddToCart}
-              className="w-full py-4 bg-primary-600 text-white rounded-xl font-semibold text-lg hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={product.stock !== undefined && product.stock <= 0}
+              className={`w-full py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg ${
+                product.stock !== undefined && product.stock <= 0
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+                  : 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-xl'
+              }`}
+              whileHover={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 1.02 }}
+              whileTap={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 0.98 }}
             >
-              Add to Cart - ${(product.price * selectedQuantity).toFixed(2)}
+              {product.stock !== undefined && product.stock <= 0 
+                ? 'Out of Stock' 
+                : `Add to Cart - $${(product.price * selectedQuantity).toFixed(2)}`
+              }
             </motion.button>
 
             {/* Benefits Preview */}

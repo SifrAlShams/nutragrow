@@ -1,27 +1,40 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Play, Volume2 } from 'lucide-react';
-import { useState } from 'react';
+import { Play, Volume2, VolumeX } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function VideoBackground() {
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
 
   return (
     <section className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
       {/* Video Background */}
       <video
+        ref={videoRef}
         autoPlay
         loop
-        muted
+        muted={isMuted}
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover"
       >
-        <source src="/videos/make_a_professional_video_to_b.mp4" type="video/mp4" />
+        <source src="/videos/generated_3d_product_video.mp4" type="video/mp4" />
       </video>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
+      {/* Overlay - Darkened slightly more for the bright video */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
 
       {/* Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
@@ -30,10 +43,10 @@ export default function VideoBackground() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-4xl"
+            className="max-w-4xl mx-auto"
           >
             <motion.h1
-              className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -42,7 +55,7 @@ export default function VideoBackground() {
             </motion.h1>
 
             <motion.p
-              className="text-xl md:text-2xl text-white/90 mb-8"
+              className="text-xl md:text-2xl text-white/95 mb-8 drop-shadow-md font-medium"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -78,19 +91,33 @@ export default function VideoBackground() {
         </div>
       </div>
 
-      {/* Play/Pause Control */}
-      <motion.button
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute bottom-8 right-8 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        {isPlaying ? (
-          <Volume2 size={24} />
-        ) : (
-          <Play size={24} />
-        )}
-      </motion.button>
+      {/* Controls */}
+      <div className="absolute bottom-8 right-8 flex gap-4">
+        <motion.button
+          onClick={() => setIsMuted(!isMuted)}
+          className="w-12 h-12 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/50 transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          {isMuted ? (
+            <VolumeX size={24} />
+          ) : (
+            <Volume2 size={24} />
+          )}
+        </motion.button>
+        <motion.button
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="w-12 h-12 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/50 transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          {isPlaying ? (
+            <span className="w-4 h-4 border-l-4 border-r-4 border-white inline-block"></span>
+          ) : (
+            <Play size={24} />
+          )}
+        </motion.button>
+      </div>
     </section>
   );
 }

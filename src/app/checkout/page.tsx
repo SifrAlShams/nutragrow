@@ -11,6 +11,11 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [codeError, setCodeError] = useState('');
+  const [codeSuccess, setCodeSuccess] = useState('');
+  const [isApplyingCode, setIsApplyingCode] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -22,20 +27,68 @@ export default function CheckoutPage() {
     country: 'United States',
   });
 
+  const handleApplyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!discountCode) return;
+    
+    setIsApplyingCode(true);
+    setCodeError('');
+    setCodeSuccess('');
+    
+    try {
+      const res = await fetch('/api/validate-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: discountCode })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok && data.valid) {
+        setDiscountPercentage(data.discount_percentage);
+        setCodeSuccess(`Code applied! ${data.discount_percentage}% off`);
+      } else {
+        setCodeError(data.error || 'Invalid code');
+        setDiscountPercentage(0);
+      }
+    } catch (err) {
+      setCodeError('Error validating code');
+      setDiscountPercentage(0);
+    } finally {
+      setIsApplyingCode(false);
+    }
+  };
+
+  const finalTotal = cartTotal * (1 - discountPercentage / 100);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setOrderComplete(true);
-    clearCart();
-
-    // Redirect to home after showing success
-    setTimeout(() => {
-      router.push('/');
-    }, 3000);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          items: cart,
+          shipping: formData,
+          code: discountPercentage > 0 ? discountCode : null 
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Checkout failed');
+        setIsProcessing(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error initiating checkout');
+      setIsProcessing(false);
+    }
   };
 
   if (orderComplete) {
@@ -234,7 +287,7 @@ export default function CheckoutPage() {
                   whileHover={{ scale: isProcessing ? 1 : 1.02 }}
                   whileTap={{ scale: isProcessing ? 1 : 0.98 }}
                 >
-                  {isProcessing ? 'Processing...' : `Pay $${cartTotal.toFixed(2)}`}
+                  {isProcessing ? 'Processing...' : `Continue to Payment ($${finalTotal.toFixed(2)})`}
                 </motion.button>
               </form>
             </motion.div>
@@ -279,7 +332,28 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                <div className="space-y-2 pt-4 border-t">
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="Discount Code" 
+                      value={discountCode}
+                      onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all uppercase"
+                    />
+                    <button 
+                      onClick={handleApplyCode}
+                      disabled={isApplyingCode || !discountCode}
+                      className="px-4 py-2 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 disabled:opacity-50"
+                    >
+                      {isApplyingCode ? '...' : 'Apply'}
+                    </button>
+                  </div>
+                  {codeError && <p className="text-red-500 text-sm font-medium">{codeError}</p>}
+                  {codeSuccess && <p className="text-green-500 text-sm font-medium">{codeSuccess}</p>}
+                </div>
+
+                <div className="space-y-2 pt-4 border-t mt-4">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
                     <span>${cartTotal.toFixed(2)}</span>
@@ -288,10 +362,16 @@ export default function CheckoutPage() {
                     <span>Shipping</span>
                     <span>Free</span>
                   </div>
+                  {discountPercentage > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>Discount ({discountPercentage}%)</span>
+                      <span>-${(cartTotal * (discountPercentage / 100)).toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">
                     <span>Total</span>
                     <span className="text-primary-600">
-                      ${cartTotal.toFixed(2)}
+                      ${finalTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>

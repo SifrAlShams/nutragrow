@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { CartItem, Product } from '@/types';
 
 interface CartContextType {
@@ -17,6 +17,27 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('nutragrow_cart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Failed to parse cart from localStorage:', error);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Save to localStorage on change
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem('nutragrow_cart', JSON.stringify(cart));
+    }
+  }, [cart, isInitialized]);
 
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
