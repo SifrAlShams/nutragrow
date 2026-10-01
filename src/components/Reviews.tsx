@@ -48,7 +48,7 @@ export default function Reviews() {
             Loved by Women Everywhere
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what our community has to say.
+            Don&apos;t just take our word for it. Here&apos;s what our community has to say.
           </p>
         </motion.div>
 
@@ -71,7 +71,7 @@ export default function Reviews() {
               </div>
               
               <p className="text-gray-700 mb-8 relative z-10 italic">
-                "{review.content}"
+                &ldquo;{review.content}&rdquo;
               </p>
               
               <div className="flex items-center gap-4 relative z-10">

@@ -21,7 +21,7 @@ export default async function OrderTrackingPage({ params }: { params: { id: stri
           <div className="text-center bg-white p-12 rounded-3xl shadow-sm max-w-md w-full">
             <Package className="mx-auto text-gray-300 mb-6" size={64} />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
-            <p className="text-gray-500 mb-6">We couldn't find an order with that tracking ID. Please check the link in your email.</p>
+            <p className="text-gray-500 mb-6">We couldn&apos;t find an order with that tracking ID. Please check the link in your email.</p>
             <Link href="/" className="px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors inline-block">
               Return Home
             </Link>

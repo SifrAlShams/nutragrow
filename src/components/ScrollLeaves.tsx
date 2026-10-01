@@ -123,12 +123,14 @@ export default function ScrollLeaves() {
 
     init();
 
+    const currentContainer = containerRef.current;
+
     return () => {
       if (ScrollTriggerPlugin) {
         ScrollTriggerPlugin.getAll().forEach((t: any) => t.kill());
       }
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      if (currentContainer) {
+        currentContainer.innerHTML = '';
       }
     };
   }, []);
