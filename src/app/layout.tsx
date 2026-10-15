@@ -33,6 +33,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Chatbot from "@/components/Chatbot";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,6 +48,7 @@ export default function RootLayout({
       >
         <CartProvider>
           {children}
+          <Chatbot />
         </CartProvider>
       </body>
     </html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutraGrow QR Code Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: #e2e8f0;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #34d399, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+
+    .badge::before {
+      content: '✓';
+      font-weight: 700;
+    }
+
+    .url-display {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      color: #06b6d4;
+      letter-spacing: 0.5px;
+    }
+
+    .qr-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .qr-wrapper {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .qr-wrapper:hover {
+      transform: scale(1.02);
+    }
+
+    #qrcode {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #qrcode canvas {
+      display: block !important;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .info-item {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .info-item .label {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .info-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #34d399, #06b6d4);
+      color: #0f172a;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(148, 163, 184, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .size-selector {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .size-btn {
+      padding: 8px 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.4);
+      color: #94a3b8;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .size-btn.active {
+      background: rgba(52, 211, 153, 0.15);
+      border-color: #34d399;
+      color: #34d399;
+    }
+
+    .size-btn:hover {
+      border-color: #34d399;
+      color: #34d399;
+    }
+
+    .size-label {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #34d399;
+      color: #0f172a;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 30px rgba(52, 211, 153, 0.3);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>🌿 NutraGrow QR Code</h1>
+        <p>Print-ready QR code — direct URL, no redirects, no ads</p>
+        <span class="badge">Permanent &amp; Ad-Free</span>
+      </div>
+
+      <div class="url-display">https://nutragrow.life</div>
+
+      <div class="size-label">Select download resolution:</div>
+      <div class="size-selector">
+        <button class="size-btn" data-size="512" onclick="changeSize(512, this)">512px</button>
+        <button class="size-btn active" data-size="1024" onclick="changeSize(1024, this)">1024px</button>
+        <button class="size-btn" data-size="2048" onclick="changeSize(2048, this)">2048px</button>
+        <button class="size-btn" data-size="4096" onclick="changeSize(4096, this)">4096px (Print)</button>
+      </div>
+
+      <div class="qr-container">
+        <div class="qr-wrapper">
+          <div id="qrcode"></div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">Encoded URL</div>
+          <div class="value">Direct Link</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Expires</div>
+          <div class="value">Never ♾️</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Error Correction</div>
+          <div class="value">High (30%)</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Format</div>
+          <div class="value">PNG (Lossless)</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="downloadQR()">
+          ⬇ Download PNG
+        </button>
+        <button class="btn btn-secondary" onclick="downloadSVG()">
+          📐 Download SVG
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">✓ Downloaded successfully!</div>
+
+  <!-- QRCode.js library — generates QR codes entirely client-side, no server needed -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    const DOMAIN = 'https://nutragrow.life';
+    let currentSize = 1024;
+
+    // Display QR code (visible preview is always 280px)
+    const qrContainer = document.getElementById('qrcode');
+    const qr = new QRCode(qrContainer, {
+      text: DOMAIN,
+      width: 280,
+      height: 280,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H  // High error correction — best for print
+    });
+
+    function changeSize(size, btn) {
+      currentSize = size;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = '✓ ' + message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function downloadQR() {
+      // Generate a high-res QR code canvas for download
+      const tempDiv = document.createElement('div');
+      tempDiv.style.display = 'none';
+      document.body.appendChild(tempDiv);
+
+      new QRCode(tempDiv, {
+        text: DOMAIN,
+        width: currentSize,
+        height: currentSize,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      setTimeout(() => {
+        const canvas = tempDiv.querySelector('canvas');
+        if (canvas) {
+          // Add white padding for print
+          const paddedCanvas = document.createElement('canvas');
+          const padding = Math.round(currentSize * 0.08);
+          paddedCanvas.width = currentSize + padding * 2;
+          paddedCanvas.height = currentSize + padding * 2;
+          const ctx = paddedCanvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+          ctx.drawImage(canvas, padding, padding);
+
+          const link = document.createElement('a');
+          link.download = `nutragrow-qr-${currentSize}px.png`;
+          link.href = paddedCanvas.toDataURL('image/png');
+          link.click();
+          showToast(`Downloaded ${currentSize}px PNG`);
+        }
+        document.body.removeChild(tempDiv);
+      }, 300);
+    }
+
+    function downloadSVG() {
+      // Generate SVG QR code manually for vector/print use
+      const modules = getQRModules(DOMAIN);
+      const moduleCount = modules.length;
+      const cellSize = 10;
+      const margin = cellSize * 2;
+      const size = moduleCount * cellSize + margin * 2;
+
+      let svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+  <rect width="${size}" height="${size}" fill="#ffffff"/>
+  <g fill="#000000">`;
+
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          if (modules[row][col]) {
+            svg += `\n    <rect x="${margin + col * cellSize}" y="${margin + row * cellSize}" width="${cellSize}" height="${cellSize}"/>`;
+          }
+        }
+      }
+
+      svg += `\n  </g>\n</svg>`;
+
+      const blob = new Blob([svg], { type: 'image/svg+xml' });
+      const link = document.createElement('a');
+      link.download = 'nutragrow-qr-vector.svg';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      showToast('Downloaded SVG vector file');
+    }
+
+    // Minimal QR matrix generator for SVG export
+    function getQRModules(text) {
+      // Create a temporary QR and read its canvas pixel data
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
+
+      const size = 290; // slightly larger to avoid edge issues
+      new QRCode(tempDiv, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const canvas = tempDiv.querySelector('canvas');
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+
+      // Detect module size by finding first dark pixel run
+      let moduleSize = 1;
+      let foundDark = false;
+      let darkStart = 0;
+
+      for (let x = 0; x < canvas.width; x++) {
+        const idx = x * 4;
+        const isDark = pixels[idx] < 128;
+        if (isDark && !foundDark) {
+          foundDark = true;
+          darkStart = x;
+        } else if (!isDark && foundDark) {
+          moduleSize = x - darkStart;
+          break;
+        }
+      }
+
+      if (moduleSize < 1) moduleSize = 1;
+      const moduleCount = Math.round(canvas.width / moduleSize);
+      const modules = [];
+
+      for (let row = 0; row < moduleCount; row++) {
+        modules[row] = [];
+        for (let col = 0; col < moduleCount; col++) {
+          const px = Math.floor(col * moduleSize + moduleSize / 2);
+          const py = Math.floor(row * moduleSize + moduleSize / 2);
+          if (px < canvas.width && py < canvas.height) {
+            const idx = (py * canvas.width + px) * 4;
+            modules[row][col] = pixels[idx] < 128;
+          } else {
+            modules[row][col] = false;
+          }
+        }
+      }
+
+      document.body.removeChild(tempDiv);
+      return modules;
+    }
+  </script>
+</body>
+</html>
